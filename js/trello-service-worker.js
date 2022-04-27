@@ -490,7 +490,7 @@ var simplyDataApi = {
     });
   },
   getBoardActions : function(boardId) {
-    return simplyRawApi.get("boards/" + boardId + "/actions", {"filter":"createCard,commentCard,updateCard"})
+    return simplyRawApi.get("boards/" + boardId + "/actions", {"limit":1000,"filter":"createCard,commentCard,updateCard"})
       .then(function(response) {
       if (response.status === 200) {
         return response.json();
