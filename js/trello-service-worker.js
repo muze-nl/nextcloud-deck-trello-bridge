@@ -47,7 +47,7 @@ var mockBoard = {
 var mockCard1 = {
   "title":"sw-card1",
   "description":"service worker card description",
-  "stackId":7,
+  "stackId":"7",
   "type":"plain",
   "lastModified":1650992544,
   "lastEditor":"yvo",
@@ -62,7 +62,7 @@ var mockCard1 = {
   "duedate":null,
   "deletedAt":0,
   "commentsUnread":0,
-  "id":7,
+  "id":"7",
   "ETag":"55bb13a86644ccb2e57dd2193a4c0aea",
   "overdue":0
 };
@@ -96,7 +96,7 @@ var mockStack1 = {
   "lastModified":1650992544,
   "cards":[mockCard1],
   "order":999,
-  "id":7,
+  "id":"7",
   "ETag":"55bb13a86644ccb2e57dd2193a4c0aea"
 };
 
@@ -111,22 +111,59 @@ var mockStack2 = {
   "ETag":"b0479c0cc73c9dd6b3312b20e8b739fc"
 };
 
+var mockComments = {
+  "ocs":{
+    "meta":{"status":"ok","statuscode":200,"message":"OK"},
+    "data":[
+      {
+        "id":26,
+        "objectId":1,
+        "message":"service worker says hello",
+        "actorId":"yvo",
+        "actorType":"users",
+        "actorDisplayName":"Yvo Brevoort",
+        "creationDateTime":"2022-04-27T19:03:37+00:00",
+        "mentions":[]
+      }
+    ]
+  }
+};
+
 var mockStacks = [mockStack1, mockStack2];
 
 function clone(ob) {
   return JSON.parse(JSON.stringify(ob));
 }
-        
+
+var boardMapping = {
+  "4" : "5829992a1f0b3e59e6c64759",
+  "3" : "mock"
+};
+function getBoardId(deckBoardId) {
+  if (typeof boardMapping[deckBoardId] === "undefined") {
+    boardId = "deck";
+  } else {
+    boardId = boardMapping[deckBoardId];
+  }
+  return boardId;
+}
+
 function interceptDeckApi(request) {
   console.log("Intercepting deck api request for " + request.url);
   let urlParts = request.url.split("/");
   while(urlParts && (urlParts[0] !== "deck")) {
     urlParts.shift();
   }
-  switch (urlParts[2]) {
-    case "3":
-      switch (urlParts[1]) {
-        case "stacks":
+  switch(urlParts[1]) {
+    case "stacks":
+      var params = {
+        boardId : getBoardId(urlParts[2])
+      }
+      switch (params.boardId) {
+        case "deck":
+          return fetch(request);
+        break;        
+        case "mock":
           return new Promise(function(resolve, reject) {
             console.log("Stacks request intercepted!");
             // var data = JSON.parse('[{"title":"sw-list1","boardId":3,"deletedAt":0,"lastModified":1650992544,"cards":[{"title":"sw-card1","description":"service worker card description","stackId":7,"type":"plain","lastModified":1650992544,"lastEditor":"yvo","createdAt":1650992518,"labels":[],"assignedUsers":[],"attachments":null,"attachmentCount":0,"owner":{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},"order":999,"archived":false,"duedate":null,"deletedAt":0,"commentsUnread":0,"id":7,"ETag":"55bb13a86644ccb2e57dd2193a4c0aea","overdue":0}],"order":999,"id":7,"ETag":"55bb13a86644ccb2e57dd2193a4c0aea"},{"title":"sw-list2","boardId":3,"deletedAt":0,"lastModified":1650992553,"cards":[{"title":"sw-card2","description":"","stackId":8,"type":"plain","lastModified":1650992553,"lastEditor":null,"createdAt":1650992553,"labels":[],"assignedUsers":[],"attachments":null,"attachmentCount":0,"owner":{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},"order":999,"archived":false,"duedate":null,"deletedAt":0,"commentsUnread":0,"id":8,"ETag":"b0479c0cc73c9dd6b3312b20e8b739fc","overdue":0}],"order":999,"id":8,"ETag":"b0479c0cc73c9dd6b3312b20e8b739fc"}]');
@@ -136,27 +173,7 @@ function interceptDeckApi(request) {
             resolve(myResponse);
           });
         break;
-        case "boards":
-          return new Promise(function(resolve, reject) {
-            console.log("Boards request intercepted!");
-            // var data = JSON.parse('{"title":"Service worker - Trello bridge","owner":{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},"color":"312438","archived":false,"labels":[{"title":"Finished","color":"31CC7C","boardId":3,"cardId":null,"lastModified":1650963821,"id":9,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"To review","color":"317CCC","boardId":3,"cardId":null,"lastModified":1650963821,"id":10,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Action needed","color":"FF7A66","boardId":3,"cardId":null,"lastModified":1650963821,"id":11,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Later","color":"F1DB50","boardId":3,"cardId":null,"lastModified":1650963821,"id":12,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"}],"acl":[{"participant":{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":1},{"participant":{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":2}],"permissions":{"PERMISSION_READ":true,"PERMISSION_EDIT":true,"PERMISSION_MANAGE":true,"PERMISSION_SHARE":true},"users":[{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0}],"stacks":[],"deletedAt":0,"lastModified":1650992553,"settings":{"notify-due":"assigned","calendar":true},"id":3,"ETag":"b0479c0cc73c9dd6b3312b20e8b739fc"}');
-            var blob = new Blob([JSON.stringify(mockBoard, null, 2)], {type : 'application/json'});
-            var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
-            var myResponse = new Response(blob, init);
-            resolve(myResponse);
-          });
-        break;
         default:
-          return fetch(request);
-        break;
-      }
-    break;
-    case "4":
-      var params = {
-        boardId : "5829992a1f0b3e59e6c64759"
-      };
-      switch (urlParts[1]) {
-        case "stacks":
           return new Promise(function(resolve, reject) {
             console.log("Stacks request intercepted!");
             
@@ -164,11 +181,43 @@ function interceptDeckApi(request) {
               [
                 simplyDataApi.getBoard(params.boardId),
                 simplyDataApi.getBoardLists(params.boardId),
-                simplyDataApi.getBoardCards(params.boardId)
+                simplyDataApi.getBoardCards(params.boardId),
+                simplyDataApi.getBoardActions(params.boardId)
               ]
             ).then(function(result) {
               var sortedCards = {};
+              var cardActions = {};
+              
+              result[3].forEach(function(action) {
+                if (typeof cardActions[action.data.card.id] === "undefined") {
+                  cardActions[action.data.card.id] = {
+                    comments : []
+                  };
+                }
+                switch (action.type) {
+                  case "createCard":
+                    let createDate = parseInt(new Date(action.date).getTime() /1000);
+                    cardActions[action.data.card.id].ctime = parseInt(new Date(action.date).getTime() /1000);
+                  break;
+                  case "updateCard":
+                    let updateDate = parseInt(new Date(action.date).getTime() /1000);
+                    if (
+                      (typeof cardActions[action.data.card.id].mtime === "undefined") ||
+                      (cardActions[action.data.card.id].mtime < updateDate)
+                    ) {
+                      cardActions[action.data.card.id].mtime = updateDate;
+                    }
+                  break;
+                  case "commentCard":
+                    cardActions[action.data.card.id].comments.push(action);
+                  break;
+                }
+              });
+              
               result[2].forEach(function(card) {
+                if (cardActions[card.id]) {
+                  card.actions = cardActions[card.id];
+                }
                 if (typeof sortedCards[card.idList] === "undefined") {
                   sortedCards[card.idList] = [];
                 }
@@ -187,13 +236,14 @@ function interceptDeckApi(request) {
               }
             }).then(function(result) {
               var stacks = [];
-              var stackId = 1;
-              var cardId = 1;
+              var boardId = urlParts[2];
+              var stackId = 1000001;
+              var cardId = 1000001;
               result.lists.forEach(function(trelloList) {
                 stack = clone(mockStack1);
                 delete stack.ETag;
                 stack.id = stackId;
-                stack.boardId = urlParts[2];
+                stack.boardId = boardId;
                 stack.title = trelloList.name;
                 stack.cards = [];
                 trelloList.cards.forEach(function(trelloCard) {
@@ -204,6 +254,21 @@ function interceptDeckApi(request) {
                   card.stackId = stackId;
                   card.title = trelloCard.name;
                   card.description = trelloCard.desc;
+                  console.log(trelloCard);
+                  
+                  if (trelloCard.actions) {
+                    if (trelloCard.actions.ctime) {
+                      card.createdAt = trelloCard.actions.ctime;
+                      card.lastModified = trelloCard.actions.ctime;
+                    } else if (trelloCard.actions.mtime) {
+                      card.createdAt = trelloCard.actions.mtime;
+                    }
+
+                    if (trelloCard.actions.mtime) {
+                      card.lastModified = trelloCard.actions.mtime;
+                    }
+                  }
+                  
                   stack.cards.push(card);
                   cardId++;
                 });
@@ -217,7 +282,27 @@ function interceptDeckApi(request) {
             });
           });
         break;
-        case "boards":
+      }
+    break;
+    case "boards":
+      var params = {
+        boardId : getBoardId(urlParts[2])
+      }
+      switch (params.boardId) {
+        case "deck":
+          return fetch(request);
+        break;
+        case "mock":
+          return new Promise(function(resolve, reject) {
+            console.log("Boards request intercepted!");
+            // var data = JSON.parse('{"title":"Service worker - Trello bridge","owner":{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},"color":"312438","archived":false,"labels":[{"title":"Finished","color":"31CC7C","boardId":3,"cardId":null,"lastModified":1650963821,"id":9,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"To review","color":"317CCC","boardId":3,"cardId":null,"lastModified":1650963821,"id":10,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Action needed","color":"FF7A66","boardId":3,"cardId":null,"lastModified":1650963821,"id":11,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Later","color":"F1DB50","boardId":3,"cardId":null,"lastModified":1650963821,"id":12,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"}],"acl":[{"participant":{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":1},{"participant":{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":2}],"permissions":{"PERMISSION_READ":true,"PERMISSION_EDIT":true,"PERMISSION_MANAGE":true,"PERMISSION_SHARE":true},"users":[{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0}],"stacks":[],"deletedAt":0,"lastModified":1650992553,"settings":{"notify-due":"assigned","calendar":true},"id":3,"ETag":"b0479c0cc73c9dd6b3312b20e8b739fc"}');
+            var blob = new Blob([JSON.stringify(mockBoard, null, 2)], {type : 'application/json'});
+            var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
+            var myResponse = new Response(blob, init);
+            resolve(myResponse);
+          });
+        break;
+        default:
           return new Promise(function(resolve, reject) {
             console.log("Boards request intercepted!");
             
@@ -225,7 +310,8 @@ function interceptDeckApi(request) {
               [
                 simplyDataApi.getBoard(params.boardId),
                 simplyDataApi.getBoardLists(params.boardId),
-                simplyDataApi.getBoardCards(params.boardId)
+                simplyDataApi.getBoardCards(params.boardId),
+                simplyDataApi.getBoardActions(params.boardId)
               ]
             ).then(function(result) {
               var sortedCards = {};
@@ -256,9 +342,44 @@ function interceptDeckApi(request) {
             });
           });
         break;
-        default:
-          return fetch(request);
-        break;
+      }
+    break;
+    case "api":
+      return fetch(request);
+      
+      // FIXME: the api call is done on a card id, but we have no translation of cardId to boardId or trello id.
+      
+      if (
+        (urlParts[2] == "v1.0") &&
+        (urlParts[3] == "cards")
+      ) {
+        // check if the ID is a trello card, if so, hijack the request;
+
+        let action = urlParts[5].split("?")[0];
+        switch (action) {
+          case "comments":
+            switch (getBoardId(boardId)) {
+              case "deck":
+                return fetch(request);
+              break;
+              case "mock":
+                return new Promise(function(resolve, reject) {
+                  console.log("Boards request intercepted!");
+                  // var data = JSON.parse('{"title":"Service worker - Trello bridge","owner":{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},"color":"312438","archived":false,"labels":[{"title":"Finished","color":"31CC7C","boardId":3,"cardId":null,"lastModified":1650963821,"id":9,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"To review","color":"317CCC","boardId":3,"cardId":null,"lastModified":1650963821,"id":10,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Action needed","color":"FF7A66","boardId":3,"cardId":null,"lastModified":1650963821,"id":11,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Later","color":"F1DB50","boardId":3,"cardId":null,"lastModified":1650963821,"id":12,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"}],"acl":[{"participant":{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":1},{"participant":{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":2}],"permissions":{"PERMISSION_READ":true,"PERMISSION_EDIT":true,"PERMISSION_MANAGE":true,"PERMISSION_SHARE":true},"users":[{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0}],"stacks":[],"deletedAt":0,"lastModified":1650992553,"settings":{"notify-due":"assigned","calendar":true},"id":3,"ETag":"b0479c0cc73c9dd6b3312b20e8b739fc"}');
+                  var blob = new Blob([JSON.stringify(mockComments, null, 2)], {type : 'application/json'});
+                  var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
+                  var myResponse = new Response(blob, init);
+                  resolve(myResponse);
+                });
+              break;
+              default:
+              break;
+            }
+          break;
+          default:
+            return fetch(request);
+          break;
+        }
       }
     break;
     default:
@@ -366,6 +487,15 @@ var simplyDataApi = {
         return response.json();
       }
       throw new Error("getBoardCards failed", response.status);
+    });
+  },
+  getBoardActions : function(boardId) {
+    return simplyRawApi.get("boards/" + boardId + "/actions", {"filter":"createCard,commentCard,updateCard"})
+      .then(function(response) {
+      if (response.status === 200) {
+        return response.json();
+      }
+      throw new Error("getBoardActions failed", response.status);
     });
   }
 };
