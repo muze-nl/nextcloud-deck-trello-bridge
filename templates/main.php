@@ -24,5 +24,6 @@
 
 style('deck', 'globalstyles');
 script('deck', 'main');
+script('deck', 'load-trello-service-worker');
 
 \OC::$server->getEventDispatcher()->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts');
