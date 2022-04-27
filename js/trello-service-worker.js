@@ -7,6 +7,16 @@ self.addEventListener('activate', function(event) {
   return self.clients.claim();
 });
 
+self.storedData = {};
+self.setItem = function(key, value) {
+  console.log("storing " + key + ":" + value);
+  self.storedData[key] = value;
+};
+self.getItem = function(key) {
+  console.log("getting " + key + ":" + self.storedData[key]);
+  return self.storedData[key];
+};
+
 var mockBoard = {
   "title" : "Service worker - Trello bridge",
   "owner" : {
@@ -111,21 +121,21 @@ var mockStack2 = {
   "ETag":"b0479c0cc73c9dd6b3312b20e8b739fc"
 };
 
+var mockComment1 = {
+  "id":26,
+  "objectId":1,
+  "message":"service worker says hello",
+  "actorId":"yvo",
+  "actorType":"users",
+  "actorDisplayName":"Yvo Brevoort",
+  "creationDateTime":"2022-04-27T19:03:37+00:00",
+  "mentions":[]
+};
+
 var mockComments = {
   "ocs":{
     "meta":{"status":"ok","statuscode":200,"message":"OK"},
-    "data":[
-      {
-        "id":26,
-        "objectId":1,
-        "message":"service worker says hello",
-        "actorId":"yvo",
-        "actorType":"users",
-        "actorDisplayName":"Yvo Brevoort",
-        "creationDateTime":"2022-04-27T19:03:37+00:00",
-        "mentions":[]
-      }
-    ]
+    "data":[mockComment1]
   }
 };
 
@@ -237,13 +247,15 @@ function interceptDeckApi(request) {
             }).then(function(result) {
               var stacks = [];
               var boardId = urlParts[2];
-              var stackId = 1000001;
-              var cardId = 1000001;
+              var stackId = 1000000;
+              var cardId = 1000000;
               result.lists.forEach(function(trelloList) {
                 stack = clone(mockStack1);
                 delete stack.ETag;
                 stack.id = stackId;
                 stack.boardId = boardId;
+                self.setItem("stack" + stackId, JSON.stringify({"trello" : {"list" : trelloList.id, "board" : trelloList.idBoard}}));
+                
                 stack.title = trelloList.name;
                 stack.cards = [];
                 trelloList.cards.forEach(function(trelloCard) {
@@ -252,9 +264,9 @@ function interceptDeckApi(request) {
                   
                   card.id = cardId;
                   card.stackId = stackId;
+                  self.setItem("card" + cardId, JSON.stringify({"trello" : {"card" : trelloCard.id, "list" : trelloList.id, "board" : trelloList.idBoard}}));
                   card.title = trelloCard.name;
                   card.description = trelloCard.desc;
-                  console.log(trelloCard);
                   
                   if (trelloCard.actions) {
                     if (trelloCard.actions.ctime) {
@@ -333,6 +345,7 @@ function interceptDeckApi(request) {
             }).then(function(result) {
               var board = clone(mockBoard);
               board.id = urlParts[2];
+              self.setItem("board" + board.id, JSON.stringify({"trello" : {"board" : params.boardId}}));
               board.title = result.board.name;
               delete board.ETag;
               var blob = new Blob([JSON.stringify(board, null, 2)], {type : 'application/json'});
@@ -345,36 +358,38 @@ function interceptDeckApi(request) {
       }
     break;
     case "api":
-      return fetch(request);
-      
-      // FIXME: the api call is done on a card id, but we have no translation of cardId to boardId or trello id.
-      
       if (
         (urlParts[2] == "v1.0") &&
         (urlParts[3] == "cards")
       ) {
-        // check if the ID is a trello card, if so, hijack the request;
-
+        var cardInfo = self.getItem("card" + urlParts[4]);
+        if (!cardInfo){
+          return fetch(request);
+        }
+        
+        cardInfo = JSON.parse(cardInfo);
         let action = urlParts[5].split("?")[0];
         switch (action) {
           case "comments":
-            switch (getBoardId(boardId)) {
-              case "deck":
-                return fetch(request);
-              break;
-              case "mock":
-                return new Promise(function(resolve, reject) {
-                  console.log("Boards request intercepted!");
-                  // var data = JSON.parse('{"title":"Service worker - Trello bridge","owner":{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},"color":"312438","archived":false,"labels":[{"title":"Finished","color":"31CC7C","boardId":3,"cardId":null,"lastModified":1650963821,"id":9,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"To review","color":"317CCC","boardId":3,"cardId":null,"lastModified":1650963821,"id":10,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Action needed","color":"FF7A66","boardId":3,"cardId":null,"lastModified":1650963821,"id":11,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"},{"title":"Later","color":"F1DB50","boardId":3,"cardId":null,"lastModified":1650963821,"id":12,"ETag":"ed0dda5c712fd25c84d20a3aacde9fc4"}],"acl":[{"participant":{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":1},{"participant":{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0},"type":0,"boardId":3,"permissionEdit":true,"permissionShare":false,"permissionManage":false,"owner":false,"id":2}],"permissions":{"PERMISSION_READ":true,"PERMISSION_EDIT":true,"PERMISSION_MANAGE":true,"PERMISSION_SHARE":true},"users":[{"primaryKey":"yvo","uid":"yvo","displayname":"Yvo Brevoort","type":0},{"primaryKey":"auke","uid":"auke","displayname":"Auke van Slooten","type":0},{"primaryKey":"ben","uid":"ben","displayname":"Ben Peachey","type":0}],"stacks":[],"deletedAt":0,"lastModified":1650992553,"settings":{"notify-due":"assigned","calendar":true},"id":3,"ETag":"b0479c0cc73c9dd6b3312b20e8b739fc"}');
-                  var blob = new Blob([JSON.stringify(mockComments, null, 2)], {type : 'application/json'});
-                  var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
-                  var myResponse = new Response(blob, init);
-                  resolve(myResponse);
+            return new Promise(function(resolve, reject) {
+              console.log("API Comments request intercepted!");
+              simplyDataApi.getCardComments(cardInfo.trello.card)
+              .then(function(result) {
+                comments = clone(mockComments);
+                comments.ocs.data = [];
+                result.forEach(function(trelloComment) {
+                  comment = clone(mockComment1);
+                  comment.message = trelloComment.data.text;
+                  comment.creationDateTime = trelloComment.date;
+                  comments.ocs.data.push(comment);
                 });
-              break;
-              default:
-              break;
-            }
+                var blob = new Blob([JSON.stringify(comments, null, 2)], {type : 'application/json'});
+                var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
+                var myResponse = new Response(blob, init);
+                resolve(myResponse);
+              });
+            });
+          break;
           break;
           default:
             return fetch(request);
@@ -391,7 +406,7 @@ function interceptDeckApi(request) {
 /* Network then cache */
 self.addEventListener('fetch', function(event) {
   console.log("fetch for " + event.request.url);
-  if (event.request.url.match(/\/deck\/(stacks|boards)\//)) {
+  if (event.request.url.match(/\/deck\/(api|stacks|boards)\//)) {
     event.respondWith(interceptDeckApi(event.request));
   } else {
     event.respondWith(fetch(event.request));
@@ -496,6 +511,15 @@ var simplyDataApi = {
         return response.json();
       }
       throw new Error("getBoardActions failed", response.status);
+    });
+  },
+  getCardComments : function(cardId) {
+    return simplyRawApi.get("cards/" + cardId + "/actions", {"limit":1000,"filter":"commentCard"})
+      .then(function(response) {
+      if (response.status === 200) {
+        return response.json();
+      }
+      throw new Error("getCardComments failed", response.status);
     });
   }
 };
