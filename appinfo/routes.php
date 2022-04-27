@@ -123,6 +123,8 @@ return [
 		['name' => 'attachment_api#restore', 'url' => '/api/v1.0/boards/{boardId}/stacks/{stackId}/cards/{cardId}/attachments/{attachmentId}/restore', 'verb' => 'PUT'],
 
 		['name' => 'board_api#preflighted_cors', 'url' => '/api/v1.0/{path}','verb' => 'OPTIONS', 'requirements' => ['path' => '.+']],
+
+		['name' => 'service_worker#index', 'url' => '/trello-service-worker.js','verb' => 'GET'],
 	],
 	'ocs' => [
 		['name' => 'Config#get', 'url' => '/api/v1.0/config', 'verb' => 'GET'],
