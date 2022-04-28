@@ -367,7 +367,6 @@ var routes = {
                     } else if (trelloCard.actions.mtime) {
                       card.createdAt = trelloCard.actions.mtime;
                     }
-
                     if (trelloCard.actions.mtime) {
                       card.lastModified = trelloCard.actions.mtime;
                     }
@@ -469,8 +468,9 @@ var routes = {
               updatedCard.title = trelloCard.name;
               updatedCard.description = trelloCard.desc;
               updatedCard.stackId = deckData.stackId;
-              updatedCard.id = cardId;
-              updatedCard.lastModified = parseInt(new Date().getTime() /1000);
+              updatedCard.id = parseInt(deckCardId);
+              updatedCard.createdAt = deckData.createdAt;
+              updatedCard.lastModified = deckData.lastModified;
               var blob = new Blob([JSON.stringify(updatedCard, null, 2)], {type : 'application/json'});
               var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
               myResponse = new Response(blob, init);
