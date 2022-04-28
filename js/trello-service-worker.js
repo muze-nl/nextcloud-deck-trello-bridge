@@ -149,6 +149,10 @@ var boardMapping = {
   "4" : "5829992a1f0b3e59e6c64759",
   "3" : "mock"
 };
+
+var stackId = 1000000;
+var cardId = 1000000;
+
 function getBoardId(deckBoardId) {
   if (typeof boardMapping[deckBoardId] === "undefined") {
     boardId = "deck";
@@ -247,8 +251,6 @@ function interceptDeckApi(request) {
             }).then(function(result) {
               var stacks = [];
               var boardId = urlParts[2];
-              var stackId = 1000000;
-              var cardId = 1000000;
               result.lists.forEach(function(trelloList) {
                 stack = clone(mockStack1);
                 delete stack.ETag;
@@ -390,12 +392,60 @@ function interceptDeckApi(request) {
               });
             });
           break;
-          break;
           default:
             return fetch(request);
           break;
         }
       }
+    break;
+    case "cards":
+      if (urlParts.length == 2) {
+        // the request is directly on deck/cards/
+        switch (request.method) {
+          case "POST":
+            return new Promise(function(resolve, reject) {
+              request.json()
+              .then(function(deckData) {
+                var stackInfo = self.getItem("stack" + deckData.stackId);
+                if (!stackInfo) {
+                  request.body = new Blob([JSON.stringify(deckData, null, 2)], {type : 'application/json'});
+                  return resolve(fetch(request));
+                }
+                stackInfo = JSON.parse(stackInfo);
+                var trelloList = stackInfo.trello.list;
+                if (trelloList) {
+                  var newCard = {
+                    name: deckData.title,
+                    pos: "bottom",
+                    idList: trelloList
+                  };
+                  return simplyDataApi.createCard(newCard)
+                  .then(function(trelloCard) {
+                    var createdCard = clone(mockCard1);
+                    createdCard.title = trelloCard.name;
+                    createdCard.description = trelloCard.desc;
+                    createdCard.stackId = deckData.stackId;
+                    createdCard.id = cardId;
+                    createdCard.lastModified = parseInt(new Date().getTime() /1000);
+                    createdCard.createdAt = parseInt(new Date().getTime() /1000);
+                    self.setItem("card" + cardId, JSON.stringify({"trello" : {"card" : trelloCard.id, "list" : trelloList.id, "board" : trelloList.idBoard}}));
+                    cardId++;
+                    
+                    var blob = new Blob([JSON.stringify(createdCard, null, 2)], {type : 'application/json'});
+                    var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
+                    myResponse = new Response(blob, init);
+                    return resolve(myResponse);
+                  });
+                }
+              });
+            });
+          break;
+        }
+      }
+//      console.log(request);
+//      console.log(request.body);
+//      console.log(request.method);
+//      return fetch(request);
     break;
     default:
       return fetch(request);
@@ -406,7 +456,7 @@ function interceptDeckApi(request) {
 /* Network then cache */
 self.addEventListener('fetch', function(event) {
   console.log("fetch for " + event.request.url);
-  if (event.request.url.match(/\/deck\/(api|stacks|boards)\//)) {
+  if (event.request.url.match(/\/deck\/(api|stacks|boards|cards)/)) {
     event.respondWith(interceptDeckApi(event.request));
   } else {
     event.respondWith(fetch(event.request));
@@ -520,6 +570,15 @@ var simplyDataApi = {
         return response.json();
       }
       throw new Error("getCardComments failed", response.status);
+    });
+  },
+  createCard : function(newCard) {
+    return simplyRawApi.post("cards/", newCard)
+      .then(function(response) {
+      if (response.status === 200) {
+        return response.json();
+      }
+      throw new Error("createCard failed", response.status);
     });
   }
 };
