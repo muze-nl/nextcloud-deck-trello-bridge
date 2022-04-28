@@ -441,7 +441,31 @@ function interceptDeckApi(request) {
             });
           break;
         }
-      }
+      } else {
+      // we should have a card ID
+        switch (request.method) {
+          case "DELETE":
+            var deckCardId = urlParts[2];
+            return new Promise(function(resolve, reject) {
+              var stackInfo = self.getItem("card" + deckCardId);
+              if (!stackInfo) {
+                return resolve(fetch(request));
+              }
+              stackInfo = JSON.parse(stackInfo);
+              var trelloCard = stackInfo.trello.card;
+              if (trelloCard) {
+                return simplyDataApi.deleteCard(trelloCard)
+                .then(function(trelloCard) {
+                  var blob = new Blob([JSON.stringify({}, null, 2)], {type : 'application/json'});
+                  var init = { "status" : 200 , "statusText" : "SuperSmashingGreat!" };
+                  myResponse = new Response(blob, init);
+                  return resolve(myResponse);
+                });
+              }
+            });
+          break;
+        }
+      }  
 //      console.log(request);
 //      console.log(request.body);
 //      console.log(request.method);
@@ -579,6 +603,15 @@ var simplyDataApi = {
         return response.json();
       }
       throw new Error("createCard failed", response.status);
+    });
+  },
+  deleteCard : function(cardId) {
+    return simplyRawApi.delete("cards/" + cardId)
+      .then(function(response) {
+      if (response.status === 200) {
+        return response.json();
+      }
+      throw new Error("deleteCard failed", response.status);
     });
   }
 };
