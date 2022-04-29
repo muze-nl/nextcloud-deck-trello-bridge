@@ -7,6 +7,7 @@ self.addEventListener('install', function(e) {
   console.log("service worker reporting for duty");
   return self.skipWaiting();
 });
+
 self.addEventListener('activate', function(event) {
   console.log("service worker activated");
   simplyActions.loadConfig();
@@ -15,10 +16,12 @@ self.addEventListener('activate', function(event) {
 
 /* Data storage. Contains mapping information for cards/lists so we can find their counterparts */
 self.storedData = {};
+
 self.setItem = function(key, value) {
   console.log("storing " + key + ":" + value);
   self.storedData[key] = value;
 };
+
 self.getItem = function(key) {
   console.log("getting " + key + ":" + self.storedData[key]);
   return self.storedData[key];
@@ -84,6 +87,7 @@ var mockCard1 = {
   "ETag":"55bb13a86644ccb2e57dd2193a4c0aea",
   "overdue":0
 };
+
 var mockCard2 = {
   "title":"sw-card2",
   "description":"",
@@ -152,7 +156,6 @@ var mockStacks = [mockStack1, mockStack2];
 function clone(ob) {
   return JSON.parse(JSON.stringify(ob));
 }
-
 
 /* Starting counters for our fake Deck IDs. These are temporary, but should be in a range where they are valid, but not used in Deck. */
 var stackId = 1000000;
@@ -236,7 +239,7 @@ var simplyActions = {
     .then(function(data) {
       simplyRawApi.token = data.token;
       simplyRawApi.key = data.key;
-      boardMapping = data.boardMapping;  
+      boardMapping = data.boardMapping;
     });
   },
   getTrelloBoard : function(trelloBoardId) {
@@ -250,7 +253,7 @@ var simplyActions = {
     ).then(function(result) {
       var sortedCards = {};
       var cardActions = {};
-      
+
       result[3].forEach(function(action) {
         if (typeof cardActions[action.data.card.id] === "undefined") {
           cardActions[action.data.card.id] = {
@@ -276,7 +279,7 @@ var simplyActions = {
           break;
         }
       });
-      
+
       result[2].forEach(function(card) {
         if (cardActions[card.id]) {
           card.actions = cardActions[card.id];
@@ -301,7 +304,7 @@ var simplyActions = {
   }
 };
 
-/* Routes - what url patterns do we want to override with the service worker, and what should it do */  
+/* Routes - what url patterns do we want to override with the service worker, and what should it do */
 var routes = {
   "/apps/deck/boards/:deckBoardId" : {
     "GET" : function(params) {
@@ -346,7 +349,7 @@ var routes = {
       switch (trelloBoardId) {
         case "deck":
           return;
-        break;        
+        break;
         case "mock":
           return new Promise(function(resolve, reject) {
             console.log("Stacks request intercepted!");
@@ -374,16 +377,16 @@ var routes = {
                 stack.title = trelloList.name;
                 stack.cards = [];
                 var cardOrder = 0;
-                
+
                 trelloList.cards.forEach(function(trelloCard) {
                   card = clone(mockCard1);
                   delete card.ETag;
-                  
+
                   card.id = cardId;
                   card.stackId = stackId;
                   card.order = cardOrder;
                   cardOrder++;
-                  
+
                   self.setItem("deckCard" + cardId, JSON.stringify({"trello" : {"pos" : trelloCard.pos, "card" : trelloCard.id, "list" : trelloList.id, "board" : trelloList.idBoard}, "deck" : {"order" : card.order, "card" : card.id, "stack" : card.stackId}}));
                   self.setItem("trelloCard" + trelloCard.id, JSON.stringify({"trello" : {"pos" : trelloCard.pos, "card" : trelloCard.id, "list" : trelloList.id, "board" : trelloList.idBoard}, "deck" : {"order" : card.order, "card" : card.id, "stack" : card.stackId}}));
                   card.title = trelloCard.name;
@@ -399,7 +402,7 @@ var routes = {
                       card.lastModified = trelloCard.actions.mtime;
                     }
                   }
-                  
+
                   stack.cards.push(card);
                   cardId++;
                 });
@@ -486,7 +489,7 @@ var routes = {
       });
     }
   },
-  "/deck/cards/:deckCardId/reorder" : { 
+  "/deck/cards/:deckCardId/reorder" : {
     "PUT" : function(params) {
       var deckCardId = params.deckCardId;
       return new Promise(function(resolve, reject) {
@@ -504,7 +507,7 @@ var routes = {
           cardInfo = JSON.parse(cardInfo);
           var trelloCardId = cardInfo.trello.card;
           var trelloListId = stackInfo.trello.list;
-          
+
           // FIXME: we need to calculate a new pos value for trello;
           var previousCard;
           for (var key in self.storedData) {
@@ -574,7 +577,7 @@ var routes = {
                 }
                 result.push(card);
               });
-            
+
               var blob = new Blob([JSON.stringify(result, null, 2)], {type : 'application/json'});
               var init = { "status" : 200 , "statusText" : "OK" };
               myResponse = new Response(blob, init);
@@ -585,7 +588,7 @@ var routes = {
       });
     }
   },
-  "/deck/cards/:deckCardId" : { 
+  "/deck/cards/:deckCardId" : {
     "DELETE" : function(params) {
       var deckCardId = params.deckCardId;
       return new Promise(function(resolve, reject) {
@@ -671,7 +674,7 @@ var routes = {
               self.setItem("deckCard" + cardId, JSON.stringify({"trello" : {"pos" : trelloCard.pos, "card" : trelloCard.id, "list" : trelloCard.idList, "board" : trelloCard.idBoard}, "deck" : {"order" : createdCard.order, "card" : createdCard.id, "stack" : createdCard.stackId}}));
               self.setItem("trelloCard" + trelloCard.id, JSON.stringify({"trello" : {"pos" : trelloCard.pos, "card" : trelloCard.id, "list" : trelloCard.idList, "board" : trelloCard.idBoard}, "deck" : {"order" : createdCard.order, "card" : createdCard.id, "stack" : createdCard.stackId}}));
               cardId++;
-              
+
               var blob = new Blob([JSON.stringify(createdCard, null, 2)], {type : 'application/json'});
               var init = { "status" : 200 , "statusText" : "OK" };
               myResponse = new Response(blob, init);
@@ -725,7 +728,7 @@ var simplyRawApi = {
     let auth = {}
     auth.key = this.key;
     auth.token = this.token;
-    
+
     return fetch(simplyRawApi.url + endpoint + "/" + simplyRawApi.encodeGetParams(auth), {
       mode : 'cors',
       headers: this.headers,
@@ -737,7 +740,7 @@ var simplyRawApi = {
     let auth = {}
     auth.key = this.key;
     auth.token = this.token;
-    
+
     return fetch(simplyRawApi.url + endpoint + "/" + simplyRawApi.encodeGetParams(auth), {
       mode: 'cors',
       headers: this.headers,
@@ -851,4 +854,3 @@ var simplyDataApi = {
   }
 };
 /* End of Data API */
-
