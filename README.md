@@ -49,3 +49,11 @@ ln -s apps/deck/js/trello-service-worker.js .
 - Create a developer key on Trello: https://trello.com/app-key
 - Add your credentials to apps/deck/js/trello-config.js
 - Add a mapping from your board ID to the board ID in trello. This can be either the long version (as used in the trello API) or the short version (as used in trello urls);
+
+## Development
+
+### Tests
+
+Unit-tests have been created for the Javascript (JS) code.
+
+For JS testing, Qunit is used. To run all tests, open [`tests/js/index.html`](./tests/js/index.html) in a browser.
