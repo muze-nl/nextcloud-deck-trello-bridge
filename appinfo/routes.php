@@ -124,7 +124,7 @@ return [
 
 		['name' => 'board_api#preflighted_cors', 'url' => '/api/v1.0/{path}','verb' => 'OPTIONS', 'requirements' => ['path' => '.+']],
 
-		['name' => 'service_worker#index', 'url' => '/trello-service-worker.js','verb' => 'GET'],
+		['name' => 'service_worker#config', 'url' => '/trello-config.js','verb' => 'GET'],
 	],
 	'ocs' => [
 		['name' => 'Config#get', 'url' => '/api/v1.0/config', 'verb' => 'GET'],

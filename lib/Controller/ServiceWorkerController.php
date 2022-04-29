@@ -30,8 +30,8 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\IInitialStateService;
 use OCP\IRequest;
 use OCP\AppFramework\Http\Response;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Controller;
-use OCA\Deck\ScriptResponse;
 
 class ServiceWorkerController extends Controller {
 	private $permissionService;
@@ -55,14 +55,13 @@ class ServiceWorkerController extends Controller {
 	}
 
 	/**
-	 * Handle main html view from templates/main.php
-	 * This will return the main angular application
-	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function index() {
-		$contents = file_get_contents(__DIR__ . "/../../js/trello-service-worker.js");
-		return new ScriptResponse($contents, 200);
+	public function config() {
+		// FIXME: this information should come from the user / board configs
+		$contents = file_get_contents(__DIR__ . "/../../js/trello-config.js");
+		$contents = json_decode($contents, true);
+		return new JSONResponse($contents, 200); // FIXME: Use nextcloud native JsonResponse
 	}
 }

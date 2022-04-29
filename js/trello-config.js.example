@@ -1,0 +1,8 @@
+{
+  token : "{TRELLO_SERVER_TOKEN_GOES_HERE}",
+  key : "{TRELLO_KEY_GOES_HERE}",
+  boardMapping : {
+    "4" : "5829992a1f0b3e59e6c64759",
+    "3" : "mock"
+  }
+};

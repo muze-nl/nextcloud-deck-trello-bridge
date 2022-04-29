@@ -1,12 +1,19 @@
+/*
+  Service worker to bridge Trello to Deck
+*/
+
+/* Setup the service worker. Activate as soon as we can*/
 self.addEventListener('install', function(e) {
   console.log("service worker reporting for duty");
   return self.skipWaiting();
 });
 self.addEventListener('activate', function(event) {
   console.log("service worker activated");
+  simplyActions.loadConfig();
   return self.clients.claim();
 });
 
+/* Data storage. Contains mapping information for cards/lists so we can find their counterparts */
 self.storedData = {};
 self.setItem = function(key, value) {
   console.log("storing " + key + ":" + value);
@@ -17,6 +24,7 @@ self.getItem = function(key) {
   return self.storedData[key];
 };
 
+/* Mock data / templates for what Deck expects */
 var mockBoard = {
   "title" : "Service worker - Trello bridge",
   "owner" : {
@@ -145,15 +153,15 @@ function clone(ob) {
   return JSON.parse(JSON.stringify(ob));
 }
 
-var boardMapping = {
-  "4" : "5829992a1f0b3e59e6c64759",
-  "3" : "mock"
-};
 
+/* Starting counters for our fake Deck IDs. These are temporary, but should be in a range where they are valid, but not used in Deck. */
 var stackId = 1000000;
 var cardId = 1000000;
 var commentId = 1000000;
 
+var boardMapping = {};
+
+/* Mapper from Deck Board ID to Trello Board ID */
 function getBoardId(deckBoardId) {
   if (typeof boardMapping[deckBoardId] === "undefined") {
     boardId = "deck";
@@ -164,6 +172,7 @@ function getBoardId(deckBoardId) {
 }
 
 /* Simply Route */
+/* Provides a routing pattern to override specific requests in the service worker */
 var simplyRoute = {
   routeInfo : [],
   load : function(routes) {
@@ -217,7 +226,19 @@ var simplyRoute = {
   }
 };
 
+/* Actions - Simply style. Uses the simplyDataApi to fetch data and crunch the data so we can more easily consume it */
 var simplyActions = {
+  loadConfig : function() {
+    return fetch("/index.php/apps/deck/trello-config.js")
+    .then(function(result) {
+      return result.json();
+    })
+    .then(function(data) {
+      simplyRawApi.token = data.token;
+      simplyRawApi.key = data.key;
+      boardMapping = data.boardMapping;  
+    });
+  },
   getTrelloBoard : function(trelloBoardId) {
     return Promise.all(
       [
@@ -279,7 +300,8 @@ var simplyActions = {
     });
   }
 };
-  
+
+/* Routes - what url patterns do we want to override with the service worker, and what should it do */  
 var routes = {
   "/apps/deck/boards/:deckBoardId" : {
     "GET" : function(params) {
@@ -662,9 +684,10 @@ var routes = {
   }
 };
 
+/* Activate the routes */
 simplyRoute.load(routes);
 
-/* Defer to simplyRoute */
+/* Defer fetch event to simplyRoute. If no route was found, continue unmodified. */
 self.addEventListener('fetch', function(event) {
   var response = simplyRoute.match(event.request, {request : event.request});
   if (response) {
@@ -675,7 +698,7 @@ self.addEventListener('fetch', function(event) {
   }
 });
 
-/* Raw API */
+/* Raw API - Provides low-level methods to the Trello API */
 var simplyRawApi = {
   url : "https://api.trello.com/1/",
   headers : {
@@ -730,13 +753,11 @@ var simplyRawApi = {
       headers: this.headers,
       method: "DELETE"
     });
-  },
-  token : "73a4a4752868d8a7da00f79f72b7a203658361aaf430a572f73ab2a5ee7a58fd",
-  key : "7ffc8fb72c8f00564a68a583b05eebe3"
+  }
 };
 /* End of Raw API */
 
-/* Data API */
+/* Data API - provides higher level API functions. Uses the Raw API for communication with Trello API */
 var simplyDataApi = {
   getBoard : function(boardId) {
     return simplyRawApi.get("boards/" + boardId)
@@ -830,5 +851,4 @@ var simplyDataApi = {
   }
 };
 /* End of Data API */
-
 
