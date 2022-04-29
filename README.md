@@ -68,6 +68,14 @@ Not yet supported:
 - [ ] Card attachments
 - [ ] Card labels
 
+## Thanks
+
+![NextGov hackathon 2022 logo](https://eventornado-files.ams3.cdn.digitaloceanspaces.com/events/182/6gOrCCJs4Goq9Qcscnw4dCtifEsdLxRcedU19mQn_large.jpeg)
+
+This code was created for the [Nextgov hackathon](https://nextgov-hackathon.eu/) in 2022, as part of the _"Improvements to Deck"_ track.
+
+We would like to thank the Open Source Programme Office at the European Commission ([EC-OSPO](https://joinup.ec.europa.eu/collection/ec-ospo)) and [Nextcloud](https://nextcloud.com/) for making this hackathon possible!
+
 ## Contributing
 
 As this code has been created as a proof-of-concept for a hackathon, PRs are not expected (or accepted).
