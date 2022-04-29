@@ -646,7 +646,8 @@ var routes = {
               createdCard.id = cardId;
               createdCard.lastModified = parseInt(new Date().getTime() /1000);
               createdCard.createdAt = parseInt(new Date().getTime() /1000);
-              self.setItem("deckCard" + cardId, JSON.stringify({"trello" : {"card" : trelloCard.id, "list" : trelloList.id, "board" : trelloList.idBoard}}));
+              self.setItem("deckCard" + cardId, JSON.stringify({"trello" : {"pos" : trelloCard.pos, "card" : trelloCard.id, "list" : trelloCard.idList, "board" : trelloCard.idBoard}, "deck" : {"order" : createdCard.order, "card" : createdCard.id, "stack" : createdCard.stackId}}));
+              self.setItem("trelloCard" + trelloCard.id, JSON.stringify({"trello" : {"pos" : trelloCard.pos, "card" : trelloCard.id, "list" : trelloCard.idList, "board" : trelloCard.idBoard}, "deck" : {"order" : createdCard.order, "card" : createdCard.id, "stack" : createdCard.stackId}}));
               cardId++;
               
               var blob = new Blob([JSON.stringify(createdCard, null, 2)], {type : 'application/json'});
