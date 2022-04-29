@@ -68,6 +68,26 @@ Not yet supported:
 - [ ] Card attachments
 - [ ] Card labels
 
+## Development
+
+In order to make this work, a clone of the original Deck code was made.
+
+The following files were added or edited:
+
+- `appinfo/routes.php`
+- `js/load-trello-service-worker.js` 🆕
+- `js/trello-service-worker.js` 🆕
+- `lib/Controller/ServiceWorkerController.php` 🆕
+- `templates/main.php`
+
+The main template includes the `load-trello-service-worker.js` script in the browser, as part of the Deck application.
+
+The loader JS script registers the service worker in the browser, from the `/trello-service-worker.js` URL.
+
+A relation diagram of this would look like this:
+
+![File relationship diagram](docs/file-relationship-diagram.svg)
+
 ## Thanks
 
 ![NextGov hackathon 2022 logo](https://eventornado-files.ams3.cdn.digitaloceanspaces.com/events/182/6gOrCCJs4Goq9Qcscnw4dCtifEsdLxRcedU19mQn_large.jpeg)
