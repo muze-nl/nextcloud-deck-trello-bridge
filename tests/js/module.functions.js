@@ -66,4 +66,66 @@ QUnit.module('Functions', function () {
       assert.deepEqual(actual, {foo: 'bar'}, 'clone() should return a clone of the given object when called with an object')
     });
   })
+
+  QUnit.module('getBoardId()', function () {
+    QUnit.testStart(function () {
+      boardMapping = {}
+    })
+
+    QUnit.test('given nothing', function (assert) {
+      const actual = getBoardId()
+      const expected = 'deck'
+
+      assert.equal(actual, expected, 'getBoardId() should return "deck" when not given any parameters')
+    })
+
+    QUnit.test.each('given value without board mapping', {
+        "undefined": undefined,
+        "true": true,
+        "false": false,
+        "null": null,
+        "int:0": 0,
+        "int:1": 1,
+        "string:empty": '',
+        "string:foo": 'foo',
+        "array:empty": [],
+        "array": ['foo', 'bar'],
+        "object:empty": {},
+        "object:simple": {foo: 'bar'},
+        "object:complex": mockBoard,
+        "function": function () {},
+      },
+      function (assert, value) {
+        const actual = getBoardId(value)
+        const expected = 'deck'
+
+        assert.equal(actual, expected, 'getBoardId() should return "deck" when given parameter without a board mapping')
+      }
+    );
+
+    QUnit.test('given value with board mapping', function (assert) {
+      const expected = 'bar'
+
+      boardMapping = {
+        foo: expected
+      }
+
+      const actual = getBoardId('foo')
+
+      assert.equal(actual, expected, 'getBoardId() should return mapped board when given parameter with a board mapping')
+    })
+  })
+
+  QUnit.module('getItem()', function () {
+    QUnit.test('Assert True', function (assert) {
+      assert.true(true)
+    })
+  })
+
+  QUnit.module('setItem()', function () {
+    QUnit.test('Assert True', function (assert) {
+      assert.true(true)
+    })
+  })
+
 });
