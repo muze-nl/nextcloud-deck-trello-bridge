@@ -1,9 +1,31 @@
 QUnit.module('Functions', function () {
+  const originals = {}
+
+  QUnit.moduleStart(function () {
+    originals['console.log'] = console.log;
+
+    console.wasCalled = false;
+
+    console.log = function (message) {
+      console.wasCalled = true;
+      console.message = message;
+    };
+  })
+
+  QUnit.testStart(function () {
+    self.storedData = {};
+    console.wasCalled = false;
+  })
+
+  QUnit.moduleDone(function (details) {
+    console.log = originals['console.log'];
+  })
+
   QUnit.test('Functions should exist', function (assert) {
     assert.equal(typeof clone, 'function', 'function clone should exist')
     assert.equal(typeof getBoardId, 'function', 'function getBoardId should exist')
-    assert.equal(typeof self.setItem, 'function', 'function self.setItem should exist')
     assert.equal(typeof self.getItem, 'function', 'function self.getItem should exist')
+    assert.equal(typeof self.setItem, 'function', 'function self.setItem should exist')
   });
 
   QUnit.module('clone()', function () {
@@ -117,15 +139,68 @@ QUnit.module('Functions', function () {
   })
 
   QUnit.module('getItem()', function () {
-    QUnit.test('Assert True', function (assert) {
-      assert.true(true)
+    QUnit.testStart(function () {
+      self.storedData = {};
+    })
+
+    QUnit.test('given nothing', function (assert) {
+      const actual = self.getItem()
+      const expected = undefined
+
+      assert.equal(actual, expected, 'getItem() should return undefined when not given any parameters')
+      assert.true(console.wasCalled, 'getItem() should call console.log() when not given any parameters')
+      assert.equal(console.message, 'getting undefined:undefined', 'getItem() should call console.log() when not given any parameters')
+    })
+
+    QUnit.test('given key for unstored item', function (assert) {
+      const actual = self.getItem('foo')
+
+      assert.equal(actual, undefined, 'getItem() should return undefined when given a key for an item that has not been stored')
+      assert.true(console.wasCalled, 'getItem() should call console.log() when given a key')
+      assert.equal(console.message, 'getting foo:undefined', 'getItem() should call console.log() when given a key')
+    })
+
+    QUnit.test('given key for stored item', function (assert) {
+      self.storedData = {
+        foo: 'bar'
+      }
+
+      const actual = self.getItem('foo')
+
+      assert.equal(actual, 'bar', 'getItem() should return the stored item when given a key for an item that has been stored')
+      assert.true(console.wasCalled, 'getItem() should call console.log() when given a key')
+      assert.equal(console.message, 'getting foo:bar', 'getItem() should call console.log() when given a key')
     })
   })
 
   QUnit.module('setItem()', function () {
-    QUnit.test('Assert True', function (assert) {
-      assert.true(true)
+    QUnit.testStart(function () {
+      self.storedData = {};
+      console.wasCalled = false;
+    })
+
+    QUnit.test('given nothing', function (assert) {
+      self.setItem()
+
+      assert.deepEqual(self.storedData, {"undefined": undefined}, 'setItem() should set undefined key and value when not given any parameters')
+      assert.true(console.wasCalled, 'setItem() should call console.log() when not given any parameters')
+      assert.equal(console.message, 'storing undefined:undefined', 'setItem() should call console.log() when not given any parameters')
+    })
+
+    QUnit.test('given key', function (assert) {
+      self.setItem('foo')
+
+      assert.deepEqual(self.storedData, {"foo": undefined}, 'setItem() should set undefined value for given key when only given a key')
+      assert.true(console.wasCalled, 'setItem() should call console.log() when given a key')
+      assert.equal(console.message, 'storing foo:undefined', 'setItem() should call console.log() when given a key')
+    })
+
+    QUnit.test('given key and value', function (assert) {
+      self.setItem('foo', 'bar')
+
+      assert.deepEqual(self.storedData, {foo: "bar"}, 'setItem() should set value for given key when given a key and value')
+      assert.true(console.wasCalled, 'setItem() should call console.log() when given a key and value')
+      assert.equal(console.message, 'storing foo:bar', 'setItem() should call console.log() when given a key')
     })
   })
-
 });
