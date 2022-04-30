@@ -7,7 +7,7 @@ QUnit.module('Functions', function () {
   });
 
   QUnit.module('clone()', function () {
-    QUnit.test('error without parameters', function (assert) {
+    QUnit.test('given nothing', function (assert) {
       assert.throws(
         function () {
           clone()
@@ -17,7 +17,7 @@ QUnit.module('Functions', function () {
       );
     })
 
-    QUnit.test('error with undefined', function (assert) {
+    QUnit.test('given undefined', function (assert) {
       assert.throws(
         function () {
           clone(undefined)
@@ -27,7 +27,7 @@ QUnit.module('Functions', function () {
       );
     })
 
-    QUnit.test('error with function', function (assert) {
+    QUnit.test('given function', function (assert) {
       assert.throws(
         function () {
           clone(function () {})
@@ -37,7 +37,7 @@ QUnit.module('Functions', function () {
       );
     })
 
-    QUnit.test.each('return value matches input', {
+    QUnit.test.each('given input matches return value', {
         "true": true,
         "false": false,
         "null": null,
@@ -56,7 +56,7 @@ QUnit.module('Functions', function () {
       }
     );
 
-    QUnit.test('return a clone', function (assert) {
+    QUnit.test('return value is a clone', function (assert) {
       const original = {foo: 'bar'}
 
       const actual = clone(original);
