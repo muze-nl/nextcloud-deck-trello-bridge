@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Test Suite</title>
+  <link rel="stylesheet" href="../../node_modules/qunit/qunit/qunit.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="../../node_modules/qunit/qunit/qunit.js"></script>
+
+  <script>
+    /*/ replace addEventListener with a mock /*/
+    // @TODO: Should this be moved to "runbeforeclass" in the relevant test?
+    var addEventListener = window.addEventListener;
+
+    const EventListeners = {};
+    window.addEventListener = function(event, callback) {
+      if (event === 'install' || event === 'activate' || event === 'fetch') {
+        EventListeners[event] = callback;
+      } else {
+        addEventListener.apply(this, arguments);
+      }
+    };
+  </script>
+  <!-- Load code-under-test -->
+  <script src="../../js/trello-service-worker.js"></script>
+
+  <!-- Load test scripts -->
+  <script src="module.actions.js"></script>
+  <script src="module.api.high-level.js"></script>
+  <script src="module.api.low-level.js"></script>
+  <script src="module.data.js"></script>
+  <script src="module.event-listeners.js"></script>
+  <script src="module.functions.js"></script>
+  <script src="module.mock-data.js"></script>
+  <script src="module.routing.js"></script>
+</body>
+</html>
