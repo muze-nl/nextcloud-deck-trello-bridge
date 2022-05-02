@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "qunit": "^2.18"
+    "qunit": "^2.18",
+    "sinon": "^13.0"
   },
   "license": "AGPL-3.0-or-later",
   "private": true

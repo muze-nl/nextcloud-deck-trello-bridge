@@ -17,7 +17,7 @@ QUnit.module('Functions', function () {
     console.wasCalled = false;
   })
 
-  QUnit.moduleDone(function (details) {
+  QUnit.testDone(function (details) {
     console.log = originals['console.log'];
   })
 
