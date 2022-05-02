@@ -9,8 +9,15 @@
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
   <script src="../../node_modules/qunit/qunit/qunit.js"></script>
+  <script src="../../node_modules/sinon/pkg/sinon.js"></script>
 
   <script>
+    // QUnit.config.reorder = false;
+
+    QUnit.testDone(function () {
+      sinon.restore();
+    })
+
     /*/ replace addEventListener with a mock /*/
     // @TODO: Should this be moved to "runbeforeclass" in the relevant test?
     var addEventListener = window.addEventListener;
