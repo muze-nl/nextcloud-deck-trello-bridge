@@ -1,0 +1,34 @@
+@startuml
+
+title File Relationship Diagram
+
+skinparam {
+    defaultTextAlignment center
+    linetype ortho
+    monochrome true
+    nodeSep 75
+    ranksep 75
+    sameClassWidth true
+    shadowing false
+}
+
+hide empty members
+
+allowmixing
+
+class ServiceWorkerController
+
+file "appinfo/routes.php" as router
+file "load-trello-service-worker.js" as loader
+file "trello-service-worker.js" as service_worker
+file "templates/main.php" as main
+
+router -> ServiceWorkerController: register
+'ServiceWorkerController -> service_worker: read
+ServiceWorkerController -u-> main: load
+'ServiceWorkerController --> ScriptResponse: return
+main -u-> loader: register
+
+loader .l.> service_worker: load in\nthe browser
+
+@enduml

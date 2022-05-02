@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="308px" preserveAspectRatio="none" style="width:544px;height:308px;background:#FFFFFF;" version="1.1" viewBox="0 0 544 308" width="544px" zoomAndPan="magnify"><defs/><g><rect height="26.2969" style="stroke:#00000000;stroke-width:1.0;fill:none;" width="217" x="156.5" y="5"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="207" x="161.5" y="22.9951">File Relationship Diagram</text><!--MD5=[fc37b77a8a7d4baccadfb21d68fdc7b8]
+class ServiceWorkerController--><g id="elem_ServiceWorkerController"><rect codeLine="17" fill="#F1F1F1" height="32" id="ServiceWorkerController" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="208" x="319" y="267.2969"/><ellipse cx="334" cy="283.2969" fill="#C2C2C2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M336.4688,289.1719 Q335.8906,289.4844 335.25,289.6406 Q334.6094,289.7969 333.9063,289.7969 Q331.4063,289.7969 330.0781,288.125 Q328.7656,286.4531 328.7656,283.2969 Q328.7656,280.1406 330.0781,278.4688 Q331.4063,276.7969 333.9063,276.7969 Q334.6094,276.7969 335.25,276.9531 Q335.9063,277.1094 336.4688,277.4219 L336.4688,280.2188 Q335.8438,279.6563 335.25,279.3906 Q334.6563,279.1094 334.0313,279.1094 Q332.6875,279.1094 332,280.1719 Q331.3125,281.2344 331.3125,283.2969 Q331.3125,285.375 332,286.4375 Q332.6875,287.4844 334.0313,287.4844 Q334.6563,287.4844 335.25,287.2188 Q335.8438,286.9531 336.4688,286.375 L336.4688,289.1719 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="176" x="348" y="288.1436">ServiceWorkerController</text></g><!--MD5=[7342edd9a184d8607391f4c130efbf01]
+entity router--><g id="elem_router"><path d="M16,267.7969 L16,299.0938 A2.5,2.5 0 0 0 18.5,301.5938 L241.5,301.5938 A2.5,2.5 0 0 0 244,299.0938 L244,275.2969 L234,265.2969 L18.5,265.2969 A2.5,2.5 0 0 0 16,267.7969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M234,265.2969 L234,272.7969 A2.5,2.5 0 0 0 236.5,275.2969 L244,275.2969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="135" x="62.5" y="288.292">appinfo/routes.php</text></g><!--MD5=[82baf439a90eede0fb64fe0703dd92f7]
+entity loader--><g id="elem_loader"><path d="M309,45.7969 L309,77.0938 A2.5,2.5 0 0 0 311.5,79.5938 L534.5,79.5938 A2.5,2.5 0 0 0 537,77.0938 L537,53.2969 L527,43.2969 L311.5,43.2969 A2.5,2.5 0 0 0 309,45.7969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M527,43.2969 L527,50.7969 A2.5,2.5 0 0 0 529.5,53.2969 L537,53.2969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="198" x="324" y="66.292">load-trello-service-worker.js</text></g><!--MD5=[84dec9accabccbfa3e846ddebab5a090]
+entity service_worker--><g id="elem_service_worker"><path d="M6,45.7969 L6,77.0938 A2.5,2.5 0 0 0 8.5,79.5938 L231.5,79.5938 A2.5,2.5 0 0 0 234,77.0938 L234,53.2969 L224,43.2969 L8.5,43.2969 A2.5,2.5 0 0 0 6,45.7969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M224,43.2969 L224,50.7969 A2.5,2.5 0 0 0 226.5,53.2969 L234,53.2969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="162" x="39" y="66.292">trello-service-worker.js</text></g><!--MD5=[53ccf4b3ee6cf4337a0ab93ac09644f3]
+entity main--><g id="elem_main"><path d="M309,156.7969 L309,188.0938 A2.5,2.5 0 0 0 311.5,190.5938 L534.5,190.5938 A2.5,2.5 0 0 0 537,188.0938 L537,164.2969 L527,154.2969 L311.5,154.2969 A2.5,2.5 0 0 0 309,156.7969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M527,154.2969 L527,161.7969 A2.5,2.5 0 0 0 529.5,164.2969 L537,164.2969 " fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="143" x="351.5" y="177.292">templates/main.php</text></g><!--MD5=[b316d0d872df18f7c747c00b65b60dec]
+link router to ServiceWorkerController--><g id="link_router_ServiceWorkerController"><path codeLine="24" d="M244.12,283.2969 C244.12,283.2969 313.75,283.2969 313.75,283.2969 " fill="none" id="router-to-ServiceWorkerController" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="318.75,283.2969,309.75,279.2969,313.75,283.2969,309.75,287.2969,318.75,283.2969" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="266.94" y="296.3638">register</text></g><!--MD5=[028872812d95a4b606cdc2b788570d7c]
+reverse link main to ServiceWorkerController--><g id="link_main_ServiceWorkerController"><path codeLine="26" d="M423,195.6269 C423,195.6269 423,267.1069 423,267.1069 " fill="none" id="main-backto-ServiceWorkerController" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="423,190.6269,419,199.6269,423,195.6269,427,199.6269,423,190.6269" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="28" x="394" y="227.4338">load</text></g><!--MD5=[1b17448e91dec41bbbc2b46a2a0bf5ca]
+reverse link loader to main--><g id="link_loader_main"><path codeLine="28" d="M423,84.6269 C423,84.6269 423,153.9369 423,153.9369 " fill="none" id="loader-backto-main" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="423,79.6269,419,88.6269,423,84.6269,427,88.6269,423,79.6269" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="372" y="115.3538">register</text></g><!--MD5=[1c6be9f7b5ae0b6f310a7158c740f7f1]
+reverse link service_worker to loader--><g id="link_service_worker_loader"><path codeLine="30" d="M239.12,61.2969 C239.12,61.2969 308.98,61.2969 308.98,61.2969 " fill="none" id="service_worker-backto-loader" style="stroke:#181818;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#181818" points="234.12,61.2969,243.12,65.2969,239.12,61.2969,243.12,57.2969,234.12,61.2969" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="44" x="252.05" y="74.3638">load in</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="77" x="235.55" y="89.4966">the browser</text></g><!--MD5=[b67d2f855967a776851b6b5a31491b99]
+@startuml
+title File Relationship Diagram
+
+skinparam {
+    defaultTextAlignment center
+    linetype ortho
+    monochrome true
+    nodeSep 75
+    ranksep 75
+    sameClassWidth true
+    shadowing false
+}
+
+hide empty members
+
+allowmixing
+
+class ServiceWorkerController
+
+file "appinfo/routes.php" as router
+file "load-trello-service-worker.js" as loader
+file "trello-service-worker.js" as service_worker
+file "templates/main.php" as main
+
+router -> ServiceWorkerController: register
+'ServiceWorkerController -> service_worker: read
+ServiceWorkerController -u-> main: load
+'ServiceWorkerController - -> ScriptResponse: return
+main -u-> loader: register
+
+loader .l.> service_worker: load in\nthe browser
+
+@enduml
+
+@startuml
+title File Relationship Diagram
+
+skinparam {
+    defaultTextAlignment center
+    linetype ortho
+    monochrome true
+    nodeSep 75
+    ranksep 75
+    sameClassWidth true
+    shadowing false
+}
+
+hide empty members
+
+allowmixing
+
+class ServiceWorkerController
+
+file "appinfo/routes.php" as router
+file "load-trello-service-worker.js" as loader
+file "trello-service-worker.js" as service_worker
+file "templates/main.php" as main
+
+router -> ServiceWorkerController: register
+ServiceWorkerController -u-> main: load
+main -u-> loader: register
+
+loader .l.> service_worker: load in\nthe browser
+
+@enduml
+
+PlantUML version 1.2022.4(Sat Apr 09 15:29:17 CEST 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
