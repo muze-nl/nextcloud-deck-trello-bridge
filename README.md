@@ -88,6 +88,12 @@ A relation diagram of this would look like this:
 
 ![File relationship diagram](docs/file-relationship-diagram.svg)
 
+### Tests
+
+Unit-tests have been created for the Javascript (JS) code.
+
+For JS testing, Qunit is used. To run all tests, open [`tests/js/index.html`](./tests/js/index.html) in a browser.
+
 ## Thanks
 
 ![NextGov hackathon 2022 logo](https://eventornado-files.ams3.cdn.digitaloceanspaces.com/events/182/6gOrCCJs4Goq9Qcscnw4dCtifEsdLxRcedU19mQn_large.jpeg)
@@ -116,31 +122,3 @@ The AGPL-3.0 demands that the original copyright must be retained, hence this pr
 [project-stage-page]: https://blog.pother.ca/project-stages/
 [standard-readme-link]: https://github.com/RichardLitt/standard-readme
 [standard-readme-shield]: https://img.shields.io/badge/-Standard%20Readme-brightgreen.svg
-=======
-## Installation
-*Note:* The service worker needs to be in the root to be able to intercept both calls to apps/deck/* and ocs/*
-
-- Link trello-service-worker.js to the root:
-```
-cd NEXTCLOUD_ROOT
-ln -s apps/deck/js/trello-service-worker.js .
-```
-
-- Add this to the .htaccess:
-```
-  <FilesMatch "trello-service-worker.js$">
-    Header always unset Content-Security-Policy
-  </FilesMatch>
-```
-
-- Create a developer key on Trello: https://trello.com/app-key
-- Add your credentials to apps/deck/js/trello-config.js
-- Add a mapping from your board ID to the board ID in trello. This can be either the long version (as used in the trello API) or the short version (as used in trello urls);
-
-## Development
-
-### Tests
-
-Unit-tests have been created for the Javascript (JS) code.
-
-For JS testing, Qunit is used. To run all tests, open [`tests/js/index.html`](./tests/js/index.html) in a browser.
