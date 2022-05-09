@@ -6,4 +6,7 @@ if ('serviceWorker' in navigator) {
   .catch(function(error) {
     console.log('Service worker registration failed, error:', error);
   });
+  if (navigator.serviceWorker.controller === null) {
+    window.location.reload();
+  }
 }
